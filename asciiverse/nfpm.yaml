@@ -1,0 +1,50 @@
+# System packages (.deb, .rpm, .apk, Arch) for 0verkill, built by nfpm from
+# the same static Linux build as the av archive. The release workflow sets
+# VERSION, RELEASE (our packaging release) and ARCH (amd64 or arm64).
+#
+# No .desktop file on purpose: av is the one place titles are started from,
+# so Asciiverse packages never add menu entries (asciiverse/CLAUDE.md).
+#
+# Upstream's server and bot become 0verkill-server and 0verkill-bot, names
+# fit for /usr/bin. 0verkill-play starts a local game (server, two bots and
+# the client); the programs find their data in /usr/share/0verkill.
+name: 0verkill
+arch: ${ARCH}
+platform: linux
+version: ${VERSION}
+release: ${RELEASE}
+section: games
+priority: optional
+maintainer: Asciiverse <packages@asciiverse.sh>
+vendor: Asciiverse
+homepage: https://github.com/theasciiverse/0verkill
+license: GPL-2.0-only
+description: |
+  Bloody 2D deathmatch in ASCII art.
+  Run, jump and shoot through levels drawn in text, against friends over
+  the network or against bots. 0verkill-play starts a game on this machine.
+  By Brainsoft (2000), with the hackndev and ravener fixes, packaged by
+  Asciiverse.
+contents:
+  - src: 0verkill
+    dst: /usr/bin/0verkill
+    file_info: { mode: 0755 }
+  - src: server
+    dst: /usr/bin/0verkill-server
+    file_info: { mode: 0755 }
+  - src: bot
+    dst: /usr/bin/0verkill-bot
+    file_info: { mode: 0755 }
+  - src: asciiverse/0verkill-play
+    dst: /usr/bin/0verkill-play
+    file_info: { mode: 0755 }
+  - src: data
+    dst: /usr/share/0verkill/data
+  - src: grx
+    dst: /usr/share/0verkill/grx
+  - src: doc/COPYING
+    dst: /usr/share/doc/0verkill/copyright
+    file_info: { mode: 0644 }
+  - src: doc/README.html
+    dst: /usr/share/doc/0verkill/README.html
+    file_info: { mode: 0644 }

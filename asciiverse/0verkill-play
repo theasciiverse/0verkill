@@ -1,0 +1,55 @@
+#!/bin/sh
+# Starts 0verkill from an av install.
+#
+# With no arguments: a game on this machine. Starts a server and two bots,
+# connects the client to them, and stops all of it when the client quits.
+# With arguments: just the client, e.g. `0verkill-play -i <host>` to join a
+# server elsewhere (see `0verkill -h`).
+#
+# av links ~/.local/bin/0verkill to this file, so follow that link first.
+# System packages install it as /usr/bin/0verkill-play.
+self=$(readlink "$0" 2>/dev/null || printf '%s' "$0")
+dir=$(cd "$(dirname "$self")" && pwd)
+
+# av install: everything sits next to this script. System package: the
+# programs are 0verkill, 0verkill-server and 0verkill-bot on PATH, and they
+# find their data in /usr/share/0verkill by themselves.
+if [ -x "$dir/server" ]; then
+  cd "$dir" || exit 1
+  client=./0verkill server_bin=./server bot_bin=./bot
+else
+  client=0verkill server_bin=0verkill-server bot_bin=0verkill-bot
+fi
+
+[ $# -gt 0 ] && exec "$client" "$@"
+
+log="${XDG_CACHE_HOME:-$HOME/.cache}/asciiverse"
+mkdir -p "$log" 2>/dev/null || log=/tmp
+
+# 6666 is 0verkill's own default; take the next port if it is in use
+port=6666
+while :; do
+  "$server_bin" -p "$port" >"$log/0verkill-server.log" 2>&1 &
+  server=$!
+  sleep 1
+  kill -0 "$server" 2>/dev/null && break
+  port=$((port + 1))
+  [ "$port" -gt 6676 ] && { echo "0verkill: no free port between 6666 and 6676" >&2; exit 1; }
+done
+
+bots=""
+for name in Brain Clock; do
+  "$bot_bin" -a 127.0.0.1 -p "$port" -n "$name" >/dev/null 2>&1 &
+  bots="$bots $!"
+done
+
+# the bots ignore SIGTERM, so they get SIGKILL
+cleanup() { kill -9 $bots 2>/dev/null; kill "$server" 2>/dev/null; }
+trap cleanup EXIT INT TERM HUP
+# A shell runs its traps only once the client in front of it ends, so a
+# watcher also stops server and bots as soon as this script is gone, however
+# it ended (closed terminal, killed by av or anything else).
+me=$$
+( while kill -0 "$me" 2>/dev/null; do sleep 2; done; cleanup ) </dev/null >/dev/null 2>&1 &
+
+"$client" -i 127.0.0.1 -p "$port"

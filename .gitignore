@@ -20,3 +20,9 @@ xavi
 xeditor
 
 .*.swp
+
+# Asciiverse packaging scratch
+/stage/
+/dist/
+/pkg-test/
+*~
