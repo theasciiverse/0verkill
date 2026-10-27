@@ -37,3 +37,9 @@ None of ours.
 
 - Windows: the original Win32 port is unmaintained (see upstream's README).
 - The X11 client, the level editor and the AVI tools.
+
+## Ours
+
+- **How to play it, at the top of README.md.** A short note on installing and
+  starting it with av, or from a release archive; the original text follows
+  unchanged.

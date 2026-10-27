@@ -1,3 +1,16 @@
+> **Play it with Asciiverse.** With [av](https://asciiverse.sh), the Asciiverse
+> client:
+>
+> ```
+> av install 0verkill
+> av play 0verkill
+> ```
+>
+> Or download the archive for your system from this repository's Releases,
+> unpack it and run `./0verkill-play` (`0verkill-play.exe` on Windows).
+>
+> The original README follows.
+
 # 0verkill
 This is a fork of 0verkill in hopes to revive the game's development.
 
